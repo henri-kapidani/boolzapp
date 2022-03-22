@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+	<meta charset="utf-8">
+	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
+	<link rel="stylesheet" href="style.css">
+	<title>Boolzapp</title>
+</head>
+
+<body>
+	<div @click="toggleMenu(null, $event)" id="app" class="container">
+		<!-- contenitore sx -->
+		<div class="left">
+			<div class="header-left">
+				<div class="header-left-logo">
+					<img :src="getAvatarSrc(mainUser.avatar)" :alt="mainUser.name">
+					<h3>{{ mainUser.name }}</h3>
+				</div>
+				<div class="header-left-icons">
+					<i class="fas fa-circle-notch"></i>
+					<i class="fas fa-comment-alt"></i>
+					<i class="fas fa-ellipsis-v"></i>
+				</div>
+			</div>
+			<div class="left-disclaimer">
+				<div class="left-disclaimer-logo">
+					<i class="fa fa-bell-slash" aria-hidden="true"></i>
+				</div>
+				<div class="left-disclaimer-text">
+					<h3>Ricevi notifiche di nuovi messaggi</h3>
+					<a href="#">Attiva notifiche desktop</a>
+				</div>
+			</div>
+			<div class="left-searchbar">
+				<label class="search-label" for="search">
+					<i class="fa fa-search" aria-hidden="true"></i>
+				</label>
+				<input id="contacts-filter" class="left-searchbar-input" placeholder="Cerca o inizia una nuova chat" name="search" @keyup="searchChat" v-model="searchString">
+			</div>
+
+			<div class="contacts">
+				<div v-for="(chat, index) in arrChats" :key="" @click="setActiveChat(index)" class="contact" :class="{ active: index == activeChatIndex }" v-show="chat.user.visible">
+					<div class="contact-logo">
+						<img :src="getAvatarSrc(chat.user.avatar)" :alt="chat.user.name">
+					</div>
+					<div class="contact-info">
+						<h3>
+							<span class="contact-name">{{ chat.user.name }}</span>
+							<span v-if="chat.messages.length != 0" class="time f-right">{{ getFormattedDate(chat.messages[chat.messages.length - 1].date, 'italian') }}</span>
+						</h3>
+						<small v-if="chat.messages.length != 0">{{ chat.messages[chat.messages.length - 1].content }}</small>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /contenitore sx -->
+
+		<!-- contenitore dx -->
+		<div class="right">
+			<div class="header-right">
+				<div class="header-right-logo">
+					<img :src="getAvatarSrc(arrChats[activeChatIndex].user.avatar)" :alt="arrChats[activeChatIndex].user.name">
+					<h3><span id="header-right-contact-name">{{ arrChats[activeChatIndex].user.name }}</span></h3>
+				</div>
+				<div class="header-right-icons">
+					<i class="fas fa-search"></i>
+					<i class="fas fa-paperclip"></i>
+					<i class="fas fa-ellipsis-v"></i>
+				</div>
+			</div>
+			<div class="right-messages-container">
+				<div class="right-messages">
+
+
+
+					<div v-for="(message, messageIndex) in arrChats[activeChatIndex].messages" class="message" :class="message.sent ? 'sent' : 'received'">
+						<span class="message-text">{{ message.content }}</span>
+						<span class="message-time">{{ getFormattedDate(message.date, 'italian')}}</span>
+						<i @click="toggleMenu(messageIndex, $event)" class="fa fa-chevron-down f-right message-options js-message-menu-toggler"></i>
+						<div class="message-options-panel" v-show="messageIndex == activeMenuIndex">
+							<div class="message-info">Info messaggio</div>
+							<div @click="deleteMessage(messageIndex)" class="message-destroy">Cancella messaggio</div>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+			<div class="right-footer">
+				<div class="right-footer-icon f-left">
+					<i class="far fa-smile"></i>
+				</div>
+				<input @keyup.enter="addNewMessage" class="new-message-inputs" placeholder="Scrivi un messaggio" v-model="arrChats[activeChatIndex].newMessageContent">
+				<div class="right-footer-icon f-right">
+					<i class="fa fa-microphone" aria-hidden="true"></i>
+				</div>
+			</div>
+		</div>
+		<!-- /contenitore dx -->
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/luxon@2.3.1/build/global/luxon.min.js"></script>
+	<script src="main.js"></script>
+</body>
+
+</html>
